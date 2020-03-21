@@ -10,6 +10,9 @@ import ReactDOM from 'react-dom';
 import { IConfig } from 'umi-types';
 import { defaultMountContainerId, noop, testPathWithPrefix, toArray } from '../common';
 import { App, GlobalOptions, Options } from '../types';
+// set the global var so that i can control subapp has place to mount
+declare var window: any;
+window.qiankunReady = true;
 
 async function getMasterRuntime() {
   // eslint-disable-next-line import/no-extraneous-dependencies, global-require
@@ -29,7 +32,7 @@ export async function render(oldRender: typeof noop) {
   ) {
     const { base, setMatchedBase } = opts;
     const baseConfig = toArray(base);
-
+    const qiankunReady = window.qiankunReady as boolean;
     switch (history) {
       case 'hash': {
         const matchedBase = baseConfig.find(pathPrefix => testPathWithPrefix(`#${pathPrefix}`, location.hash));
@@ -37,7 +40,7 @@ export async function render(oldRender: typeof noop) {
           setMatchedBase(matchedBase);
         }
 
-        return !!matchedBase;
+        return !!qiankunReady && !!matchedBase;
       }
 
       case 'browser': {
@@ -46,7 +49,7 @@ export async function render(oldRender: typeof noop) {
           setMatchedBase(matchedBase);
         }
 
-        return !!matchedBase;
+        return !!qiankunReady && !!matchedBase;
       }
 
       default:
